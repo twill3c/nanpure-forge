@@ -1,3 +1,68 @@
+# AGENTS.md — nanpure-forge
+
+Rust + WASM のナンプレ工房。ロジックは全て Rust(rust/src)・UI は素の HTML/CSS/プレーン JS グルー。
+正しさの正本は cargo test の数理ゲート(一意解保証 G-02・mulberry32 言語間一致 G-05)。仕様は SPEC.md、テストは TEST_SPEC.md。
+
+## 1. 技術構成
+
+- ロジック: Rust(`rust/` クレート・edition 2021・外部依存ゼロ)→ `wasm32-unknown-unknown` リリースビルド
+- UI: `web/` の index.html + style.css + app.js(プレーン JS グルー)。フレームワーク・ビルドなし
+- `web/nanpure.wasm` はビルド成果物としてコミットする(verify.py が再生成・配置)。手で編集しない
+- 出荷物に TypeScript / Python を含まない(Python はハーネスと verify.py の開発時のみ)
+
+## 2. looplog 運用の注意
+
+- 新しいイベント種別を初めて使う前に `harness/looplog.py` の EVENT_SPECS(必須フィールドと型)を確認する。推測で引数を組み立てない。
+- `test_run` の passed / failed は**直前のテスト出力の数値をそのまま転記**する。記憶で書かない。
+- `test_run` の記録はテスト実行と**別コマンド**で行う。実行と記録を同一シェルバッチに
+  混ぜると、出力確認前に数値を書くことになる(HC-002)。
+- enum フィールド(failure.resolution / severity / commit.kind)の許容値は
+  `schema/taxonomy.json` と looplog.py の ENUMS が正。初回使用前に確認する(HC-002)。
+
+## 3. 品質ゲート(完了条件)
+
+`python scripts/verify.py` が green であること。内訳:
+
+| ゲート | 基準 |
+|---|---|
+| fmt | `cargo fmt --check` 差分 0 |
+| clippy | `cargo clippy -- -D warnings` 警告 0 |
+| test | `cargo test` 全件 green(数理ゲート G-01〜G-05 含む) |
+| wasm | `cargo build --target wasm32-unknown-unknown --release` 成功 + web/ へ配置 |
+
+ゲートを緩める変更(閾値引き下げ、テスト削除・skip、eslint-disable の追加、
+ゲート G-xx の基準変更(較正実験の証拠なしの緩和)、`.wt/gate.json` の上限変更)は、人間の承認なしに行わない。
+
+## 4. アーキテクチャ規約
+
+- ナンプレの規則(制約・生成・求解)は **Rust のみ**が知る。app.js は WASM ロード・バッファ入出力・
+  DOM 反映だけを行い、盤面の正誤判定ロジックを JS 側に複製しない(N-02)。
+- 乱数は mulberry32 を Rust 実装しシード注入(F-01)。`std::time` /乱数クレートを使わない。
+- 探索(生成・求解・解数カウント)は必ずノード予算付き(N-03)。無限探索を書かない。
+- WASM 境界は 81 バイト共有バッファ + 整数返却のみ(F-04)。文字列・JSON を境界で使わない。
+- 縁(空盤・解なし・二解)は正常系として仕様化しテストする。
+- 外部クレート依存ゼロを原則とする(標準ライブラリのみ)。
+
+## 5. 変更禁止領域
+
+- `logs/loops/*.jsonl` — append-only(LL-00a)。訂正は correction イベントで。
+- AGENTS.md 末尾の scaffold ブロックと `.scaffold/manifest.json` — scaffold-kit 管理。
+- `.wt/gate.json` の上限値 — 変更はレジストリ経由(免除パス・test_command の調整は可)。
+
+## 6. よく使うコマンド
+
+```bash
+npm run dev           # 開発サーバ
+npm run verify:fast   # typecheck + lint + test(高速ループ用)
+npm run verify        # 上記 + next build(完了条件)
+
+python harness/looplog.py append --loop loop_XXX --event ... --data ...
+python harness/looplog.py validate
+python harness/looplog.py summary --loop loop_XXX
+
+python ../harness-kit/scaffold-kit/scripts/scaffoldctl.py status --registry ../harness-kit/scaffold-kit/registry
+```
+
 <!-- scaffold:block agents_core v1.8.0 -->
 ## 共通規律(scaffold 管理領域 — 手動編集禁止)
 
