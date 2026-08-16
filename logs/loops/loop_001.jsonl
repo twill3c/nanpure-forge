@@ -7,3 +7,5 @@
 {"v": "1.2", "ts": "2026-08-17T08:47:30+09:00", "project": "nanpure-forge", "loop_id": "loop_001", "event": "stage_end", "data": {"stage": 4, "stage_name": "実装", "result": "pass"}}
 {"v": "1.2", "ts": "2026-08-17T08:47:30+09:00", "project": "nanpure-forge", "loop_id": "loop_001", "event": "stage_end", "data": {"stage": 5, "stage_name": "検証", "result": "pass"}}
 {"v": "1.2", "ts": "2026-08-17T08:47:30+09:00", "project": "nanpure-forge", "loop_id": "loop_001", "event": "stage_end", "data": {"stage": 6, "stage_name": "文書同期", "result": "pass"}}
+{"v": "1.2", "ts": "2026-08-17T08:47:30+09:00", "project": "nanpure-forge", "loop_id": "loop_001", "event": "commit", "data": {"sha": "d96cf2f", "kind": "feat"}}
+{"v": "1.2", "ts": "2026-08-17T08:47:31+09:00", "project": "nanpure-forge", "loop_id": "loop_001", "event": "loop_end", "data": {"outcome": "success", "failure_count": 0, "summary": "Rust コア完成。一意解保証・言語間 PRNG 一致・予算ゲート全合格。verify PASS"}}

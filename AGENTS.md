@@ -52,9 +52,9 @@ Rust + WASM のナンプレ工房。ロジックは全て Rust(rust/src)・UI �
 ## 6. よく使うコマンド
 
 ```bash
-npm run dev           # 開発サーバ
-npm run verify:fast   # typecheck + lint + test(高速ループ用)
-npm run verify        # 上記 + next build(完了条件)
+python -m http.server 3000 -d web    # 開発サーバ(静的)
+python scripts/verify.py --fast      # fmt + clippy + test(高速ループ用)
+python scripts/verify.py             # 上記 + wasm ビルド+配置(完了条件)
 
 python harness/looplog.py append --loop loop_XXX --event ... --data ...
 python harness/looplog.py validate

@@ -1,0 +1,124 @@
+/* nanpure-forge — 藍と生成りの単一テーマ */
+:root {
+  color-scheme: dark;
+  --bg: #101318;
+  --surface: #171c24;
+  --border: rgba(255, 255, 255, 0.1);
+  --fg: #e9ecf2;
+  --fg-secondary: #c2c7d1;
+  --fg-muted: #8b91a0;
+  --ai: #6b8fd4;
+  --warn: #e66767;
+  --ok: #2ea86b;
+  --cell: #1b212c;
+  --cell-given: #232b3a;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: "Hiragino Kaku Gothic ProN", "Noto Sans JP", system-ui, sans-serif;
+  min-height: 100dvh;
+}
+
+.app { max-width: 960px; margin: 0 auto; padding: 16px; display: grid; gap: 16px; }
+.header h1 { font-size: 1.4rem; letter-spacing: 0.02em; }
+.subtitle { color: var(--fg-secondary); font-size: 0.9rem; margin-top: 4px; }
+
+.layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 16px; align-items: start; }
+@media (max-width: 760px) { .layout { grid-template-columns: 1fr; } }
+
+.board-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  display: grid;
+  gap: 12px;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  aspect-ratio: 1;
+  border: 2px solid var(--fg-muted);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.cell {
+  font: inherit;
+  font-size: clamp(14px, 3.2vw, 22px);
+  display: grid;
+  place-items: center;
+  background: var(--cell);
+  color: var(--ai);
+  border: none;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  min-height: 0;
+  padding: 0;
+}
+
+/* 3×3 の太罫線 */
+.cell:nth-child(9n) { border-right: none; }
+.cell.br3 { border-right: 2px solid var(--fg-muted); }
+.cell.bb3 { border-bottom: 2px solid var(--fg-muted); }
+
+.cell.given { background: var(--cell-given); color: var(--fg); font-weight: 700; cursor: default; }
+.cell.selected { outline: 2px solid var(--ai); outline-offset: -2px; }
+.cell.conflict { background: rgba(230, 103, 103, 0.28); color: var(--warn); }
+.cell.wrong { animation: blink 0.3s 3; }
+@keyframes blink { 50% { background: rgba(230, 103, 103, 0.55); } }
+
+.banner { color: var(--ok); font-weight: 700; text-align: center; font-size: 1.05rem; }
+
+.pad { display: grid; grid-template-columns: repeat(10, 1fr); gap: 6px; }
+.pad button {
+  font: inherit;
+  font-size: 1.05rem;
+  color: var(--fg);
+  background: var(--cell);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  min-height: 44px;
+  cursor: pointer;
+}
+.pad button:hover { border-color: var(--ai); }
+
+.panel {
+  display: grid;
+  gap: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.label { font-size: 0.8rem; color: var(--fg-muted); width: 100%; }
+
+.panel button {
+  font: inherit;
+  color: var(--fg);
+  background: var(--cell);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 14px;
+  min-height: 44px;
+  cursor: pointer;
+}
+.panel button:hover { border-color: var(--ai); }
+.panel button.active { border-color: var(--ai); color: var(--ai); }
+
+.stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 16px; }
+.stats dt { color: var(--fg-muted); font-size: 0.75rem; }
+.stats dd { font-variant-numeric: tabular-nums; font-size: 1.05rem; }
+
+.hint-text { font-size: 0.82rem; color: var(--fg-muted); }
+
+.footer { text-align: center; font-size: 0.8rem; color: var(--fg-muted); padding: 8px 0 16px; }
+.footer a { color: inherit; }

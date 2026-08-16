@@ -329,6 +329,41 @@ pub extern "C" fn count_solutions_buf() -> u32 {
     u32::from(count_solutions(&grid, WASM_SOLVE_BUDGET).0)
 }
 
+/// バッファ盤でセル idx が行・列・箱いずれかの重複に関与していれば 1(F-06)。
+/// 空セルは常に 0
+#[no_mangle]
+pub extern "C" fn conflict_at(idx: u32) -> u32 {
+    if idx >= 81 {
+        return 0;
+    }
+    let grid = unsafe { *core::ptr::addr_of!(BUF) };
+    let i = idx as usize;
+    let v = grid[i];
+    if v == 0 {
+        return 0;
+    }
+    let (r, c, b) = (i / 9, i % 9, box_of(i));
+    for (j, &w) in grid.iter().enumerate() {
+        if j == i || w != v {
+            continue;
+        }
+        if j / 9 == r || j % 9 == c || box_of(j) == b {
+            return 1;
+        }
+    }
+    0
+}
+
+/// バッファ盤が「完全に埋まっていて妥当」なら 1(F-06 の完成判定)
+#[no_mangle]
+pub extern "C" fn is_complete_valid_buf() -> u32 {
+    let grid = unsafe { *core::ptr::addr_of!(BUF) };
+    if grid.iter().any(|&v| v == 0) {
+        return 0;
+    }
+    u32::from(Masks::build(&grid).is_some())
+}
+
 /// 直近 generate_buf の正解のセル値(ヒント機能用)
 #[no_mangle]
 pub extern "C" fn solution_at(idx: u32) -> u32 {
@@ -345,6 +380,9 @@ mod tests {
     use super::*;
 
     const SOLVE_BUDGET: u64 = 2_000_000;
+
+    /// BUF(static mut)を触るテストの直列化ロック(並列実行での競合 = VERIF-FLAKE 予防)
+    static BUF_LOCK: std::sync::Mutex<()> = std::sync::Mutex::new(());
 
     /// テスト内独立検算: 行・列・箱すべてに 1〜9 が一度ずつ
     fn assert_valid_complete(g: &Grid) {
@@ -485,9 +523,51 @@ mod tests {
         }
     }
 
+    // T-031 / F-06: conflict_at — 同行の同数字ペアだけが 1
+    #[test]
+    fn t031_conflict_at() {
+        let _guard = BUF_LOCK.lock().unwrap();
+        let mut grid: Grid = [0; 81];
+        grid[0] = 5; // (r0, c0)
+        grid[4] = 5; // (r0, c4) → 行重複ペア
+        grid[20] = 7; // (r2, c2) 単独 → 競合なし
+        unsafe { *core::ptr::addr_of_mut!(BUF) = grid };
+        assert_eq!(conflict_at(0), 1);
+        assert_eq!(conflict_at(4), 1);
+        assert_eq!(conflict_at(20), 0);
+        assert_eq!(conflict_at(40), 0, "空セルは 0");
+        // 箱重複: (r0,c0)=5 と (r1,c1)=5(同箱・別行別列)
+        let mut g2: Grid = [0; 81];
+        g2[0] = 5;
+        g2[10] = 5;
+        unsafe { *core::ptr::addr_of_mut!(BUF) = g2 };
+        assert_eq!(conflict_at(0), 1);
+        assert_eq!(conflict_at(10), 1);
+    }
+
+    // T-032 / F-06: is_complete_valid_buf
+    #[test]
+    fn t032_is_complete_valid() {
+        let _guard = BUF_LOCK.lock().unwrap();
+        let full = solve(&[0; 81], SOLVE_BUDGET).solution.unwrap();
+        unsafe { *core::ptr::addr_of_mut!(BUF) = full };
+        assert_eq!(is_complete_valid_buf(), 1);
+        // 1 マス書き換え → 0
+        let mut wrong = full;
+        wrong[0] = if full[0] == 1 { 2 } else { 1 };
+        unsafe { *core::ptr::addr_of_mut!(BUF) = wrong };
+        assert_eq!(is_complete_valid_buf(), 0);
+        // 1 マス空き → 0
+        let mut hole = full;
+        hole[40] = 0;
+        unsafe { *core::ptr::addr_of_mut!(BUF) = hole };
+        assert_eq!(is_complete_valid_buf(), 0);
+    }
+
     // T-030: WASM 境界関数(ネイティブ側で一連の整合を検証)
     #[test]
     fn t030_wasm_boundary_roundtrip() {
+        let _guard = BUF_LOCK.lock().unwrap();
         let givens = generate_buf(7, DIFF_NORMAL);
         assert!((17..=81).contains(&givens));
         assert_eq!(count_solutions_buf(), 1);
