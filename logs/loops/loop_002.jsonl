@@ -9,3 +9,7 @@
 {"v": "1.2", "ts": "2026-08-17T08:55:33+09:00", "project": "nanpure-forge", "loop_id": "loop_002", "event": "test_run", "data": {"command": "node drive-nanpure.mjs (playwright/msedge)", "passed": 12, "failed": 0}}
 {"v": "1.2", "ts": "2026-08-17T08:55:33+09:00", "project": "nanpure-forge", "loop_id": "loop_002", "event": "stage_end", "data": {"stage": 5, "stage_name": "検証", "result": "pass"}}
 {"v": "1.2", "ts": "2026-08-17T08:55:46+09:00", "project": "nanpure-forge", "loop_id": "loop_002", "event": "stage_end", "data": {"stage": 6, "stage_name": "文書同期", "result": "pass"}}
+{"v": "1.2", "ts": "2026-08-17T08:55:54+09:00", "project": "nanpure-forge", "loop_id": "loop_002", "event": "commit", "data": {"kind": "feat", "sha": "3dbd901", "message": "feat: WASM 境界拡張 + Web UI"}}
+{"v": "1.2", "ts": "2026-08-17T08:56:05+09:00", "project": "nanpure-forge", "loop_id": "loop_002", "event": "loop_end", "data": {"outcome": "success", "failure_count": 1, "summary": "F-04 拡張 + F-05/F-06/F-07 UI 完成。cargo test 8/8・verify green・playwright 12/12(favicon 404 は即修正)"}}
+{"v": "1.2", "ts": "2026-08-17T08:56:24+09:00", "project": "nanpure-forge", "loop_id": "loop_002", "event": "correction", "data": {"supersedes": 13, "reason": "failure_count 転記ミス(TDD の意図的な赤を failure と誤算入。failure レコードは 0 件)"}}
+{"v": "1.2", "ts": "2026-08-17T08:56:24+09:00", "project": "nanpure-forge", "loop_id": "loop_002", "event": "loop_end", "data": {"outcome": "success", "failure_count": 0, "summary": "F-04 拡張 + F-05/F-06/F-07 UI 完成。cargo test 8/8・verify green・playwright 12/12(favicon 404 は即修正)"}}
