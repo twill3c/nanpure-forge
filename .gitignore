@@ -1,2 +1,5 @@
 .loop/
 rust/target/
+
+.vercel
+.env*
