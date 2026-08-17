@@ -8,3 +8,5 @@
 {"v": "1.2", "ts": "2026-08-17T09:03:16+09:00", "project": "nanpure-forge", "loop_id": "loop_003", "event": "test_run", "data": {"command": "python scripts/verify.py", "passed": 5, "failed": 0}}
 {"v": "1.2", "ts": "2026-08-17T09:03:16+09:00", "project": "nanpure-forge", "loop_id": "loop_003", "event": "stage_end", "data": {"stage": 5, "stage_name": "検証", "result": "pass"}}
 {"v": "1.2", "ts": "2026-08-17T09:03:16+09:00", "project": "nanpure-forge", "loop_id": "loop_003", "event": "stage_end", "data": {"stage": 6, "stage_name": "文書同期", "result": "pass"}}
+{"v": "1.2", "ts": "2026-08-17T09:03:17+09:00", "project": "nanpure-forge", "loop_id": "loop_003", "event": "commit", "data": {"kind": "feat", "sha": "2d417b7", "message": "feat: F-08 フッタ"}}
+{"v": "1.2", "ts": "2026-08-17T09:03:17+09:00", "project": "nanpure-forge", "loop_id": "loop_003", "event": "loop_end", "data": {"outcome": "success", "failure_count": 0, "summary": "F-08 フッタ 5 リンク完成。T-040 赤→緑・verify PASS"}}
