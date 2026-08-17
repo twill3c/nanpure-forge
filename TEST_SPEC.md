@@ -24,4 +24,5 @@
 | T-030 | F-04 | WASM 境界関数(ネイティブ側で検証) | buf 経由の generate → count_solutions_buf == 1 → solve_buf == 1 の一連が整合 |
 | T-031 | F-04/F-06 | conflict_at | 同行に同数字 2 つ → 両方 1・無関係セルは 0・空セルは 0(独立ペア配置で検算) |
 | T-032 | F-04/F-06 | is_complete_valid_buf | 完全盤 → 1・1 マス書き換え → 0・1 マス空き → 0 |
+| T-040 | F-08 | フッタ 5 リンク(playwright で DOM 検査) | MIT License © 2026 坂田哲朗 の表記 + GitHub / 解き方 / 設計図 / App Menu の 4 アンカーが正しい href で存在 |
 | T-100 | G-01/G-04/N-03 | 予算ゲート | 全 60 問の生成+求解の探索ノードが予算内(数値は較正済み) |

@@ -121,4 +121,6 @@ html, body {
 .hint-text { font-size: 0.82rem; color: var(--fg-muted); }
 
 .footer { text-align: center; font-size: 0.8rem; color: var(--fg-muted); padding: 8px 0 16px; }
-.footer a { color: inherit; }
+.footer a { color: var(--fg-secondary); text-decoration: none; border-bottom: 1px solid var(--border); }
+.footer a:hover { color: var(--ai); border-color: var(--ai); }
+.fsep { margin: 0 4px; opacity: 0.5; }
