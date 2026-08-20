@@ -124,3 +124,14 @@ html, body {
 .footer a { color: var(--fg-secondary); text-decoration: none; border-bottom: 1px solid var(--border); }
 .footer a:hover { color: var(--ai); border-color: var(--ai); }
 .fsep { margin: 0 4px; opacity: 0.5; }
+
+/* fleet: fixed footer */
+.footer {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 9000;
+  margin: 0; padding: 8px 16px;
+  background: var(--bg); border-top: 1px solid var(--border);
+  backdrop-filter: blur(6px);
+  max-height: 30vh; overflow-y: auto;
+}
+body { padding-bottom: 72px; }
+@media (max-width: 640px) { body { padding-bottom: 96px; } }
