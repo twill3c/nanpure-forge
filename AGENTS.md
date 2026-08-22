@@ -63,7 +63,7 @@ python harness/looplog.py summary --loop loop_XXX
 python ../harness-kit/scaffold-kit/scripts/scaffoldctl.py status --registry ../harness-kit/scaffold-kit/registry
 ```
 
-<!-- scaffold:block agents_core v1.9.0 -->
+<!-- scaffold:block agents_core v1.11.0 -->
 ## 共通規律(scaffold 管理領域 — 手動編集禁止)
 
 このセクションはスキャフォールド・レジストリが管理する。内容を変更したい場合は、
@@ -75,7 +75,7 @@ python ../harness-kit/scaffold-kit/scripts/scaffoldctl.py status --registry ../h
 |---|---|---|
 | 1 | 計画 | 対象の要求 ID を特定し、`loop_start` を記録した |
 | 2 | 文脈読込 | SPEC.md / IMPLEMENTATION_GUIDE.md の該当箇所と、直近ループのログを読んだ。**この段階で扱うデータ・設定ファイルの実物を開いた**(索引・要約・記憶ではなく、本文・設定そのもの — HC-014) |
-| 3 | テスト先行 | TEST_SPEC.md にトレースする失敗するテストを書き、赤を確認した |
+| 3 | テスト先行 | TEST_SPEC.md にトレースする失敗するテストを書き、赤を確認した。**各ケースの期待値の出所(SPEC の条項 / 実測 / 外部権威)を書いた**(HC-016) |
 | 4 | 実装 | ファイル編集 2 回ごとにテストを実行し、赤のまま次の編集に進んでいない |
 | 5 | 検証 | 全テスト合格 + 独立再計算(該当時)を確認した |
 | 6 | 文書同期 | SPEC/docs と実装の乖離(SPEC-DRIFT)を解消し、生成ドキュメントを再生成した |
@@ -98,6 +98,18 @@ python ../harness-kit/scaffold-kit/scripts/scaffoldctl.py status --registry ../h
   本文・実物を見るまで `needs_review` を外さない
 - **抽出器を書く前に件数オラクルを探す。** コーパス自身が持つ手がかり(題名の数詞・目次・凡例の記載・
   公表された総数)を先に探し、見つからなければ「オラクル無し」と SPEC に明記する
+
+### 期待値の書き方(HC-016)
+
+テストの期待値を**観測する前に定数で書いてはならない**。書いた定数を仕様だと思い込むと、
+正しい実装・正しいデータの方が落ちる(VERIF-FALSE)。
+
+- **SPEC の保証粒度を超えない。** 超える精度を要求したくなったら、先に SPEC 側を上げる。
+  例: SPEC が「暦日の一致」しか保証していないのに「分の一致」を要求してはならない
+- **件数・行数は定数で書かない。** 「集合が一致する」「取りこぼしが無い」という不変量で書く。
+  外部データは重複・欠落を含むので、数はデータが動くたびに壊れる
+- **やむを得ず定数で書くなら、実測日と実測値をコメントに残す。** 後から見て
+  「誰かの仮定」か「その日の観測」かが区別できない期待値を残さない
 
 ### エスカレーション規範
 
