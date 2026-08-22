@@ -1,5 +1,5 @@
 {
-  "scaffold_version": "1.8.0",
+  "scaffold_version": "1.9.0",
   "registry_hint": "c:/_ClaudeCode/harness-kit/scaffold-kit/registry",
   "components": [
     {
@@ -7,8 +7,8 @@
       "id": "agents_core",
       "target": "AGENTS.md",
       "source": "blocks/agents_core.md",
-      "installed_version": "1.8.0",
-      "installed_sha256": "aa18e95da6324039b4729d76f561bee35e4f0e6d32eadfba6a7a431297320700"
+      "installed_version": "1.9.0",
+      "installed_sha256": "0265d80ebde64ae1202f9e3cc0b5b9d31a2b7e58a3f51f5747aae21c19542dc6"
     },
     {
       "type": "file",
