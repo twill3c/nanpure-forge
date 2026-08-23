@@ -1,5 +1,5 @@
 {
-  "scaffold_version": "1.11.0",
+  "scaffold_version": "1.12.0",
   "registry_hint": "c:/_ClaudeCode/harness-kit/scaffold-kit/registry",
   "components": [
     {
@@ -23,8 +23,8 @@
       "id": "looplog",
       "target": "harness/looplog.py",
       "source": "files/harness/looplog.py",
-      "installed_version": "1.8.0",
-      "installed_sha256": "e0f4dbe2085eaf7916c182e5313fd67383ad856d48b80ca58fede8d9c5eab6ff"
+      "installed_version": "1.12.0",
+      "installed_sha256": "34ebddc244944a481aeca31bcd9b4fdf7adb4a937b4a43b6ac41aeae21ddea7e"
     },
     {
       "type": "file",

@@ -153,6 +153,22 @@ def read_parsed(path: Path) -> list[tuple[int, dict]]:
     return parsed
 
 
+def voided_event_counts(parsed: list[tuple[int, dict]]) -> dict[str, int]:
+    """correction が無効化したレコードを event 別に数える(LL-09 修復スロット / HC-017)。"""
+    by_line = {ln: rec for ln, rec in parsed}
+    counts: dict[str, int] = {}
+    for _, rec in parsed:
+        if rec.get("event") != "correction":
+            continue
+        target = rec.get("data", {}).get("supersedes")
+        if not isinstance(target, int):
+            continue
+        event = by_line.get(target, {}).get("event")
+        if isinstance(event, str):
+            counts[event] = counts.get(event, 0) + 1
+    return counts
+
+
 def apply_corrections(
     parsed: list[tuple[int, dict]], fname: str
 ) -> tuple[list[tuple[int, dict]], list[str]]:
@@ -310,8 +326,20 @@ def validate_file(path: Path, taxonomy: dict) -> tuple[list[str], list[str]]:
     if len(ends) > 1:
         errs.append(f"{path.name}: loop_end が複数ある")
     if ends:
-        if records[-1].get("event") != "loop_end":
-            errs.append(f"{path.name}: loop_end の後にレコードがある(LL-07)")
+        # loop_end の後に来てよいのは修復スロットの差し替えだけ(LL-09 / HC-017)。
+        # append 側と同じ規則で判定しないと、追記は通るのに validate が落ちる
+        end_index = next(
+            i for i, r in enumerate(records) if r.get("event") == "loop_end"
+        )
+        trailing = records[end_index + 1 :]
+        budget = voided_event_counts(parsed)
+        for r in trailing:
+            event = r.get("event")
+            if budget.get(event, 0) > 0:
+                budget[event] -= 1
+            else:
+                errs.append(f"{path.name}: loop_end の後にレコードがある(LL-07)")
+                break
         actual = sum(1 for r in records if r.get("event") == "failure")
         declared = ends[0].get("data", {}).get("failure_count")
         if declared is not None and declared != actual:
@@ -376,6 +404,28 @@ def parse_kv(pairs: list[str], str_fields: frozenset[str] = frozenset()) -> dict
     return data
 
 
+def repair_slot_open(parsed: list[tuple[int, dict]], event: str) -> bool:
+    """完了済みループでの差し替えを許すか(LL-09 / HC-017)。
+
+    correction が無効化したレコードと同じ event に限り、**無効化 1 件につき
+    1 件だけ**追記を通す。これが無いと、閉じたループの failure を訂正した瞬間に
+    loop_end.failure_count と実レコード数がずれ、LL-07 に永久に落ちる。
+    """
+    end_lines = [ln for ln, rec in parsed if rec.get("event") == "loop_end"]
+    if not end_lines:
+        return False
+    end_line = max(end_lines)
+
+    voided = voided_event_counts(parsed).get(event, 0)
+    if voided == 0:
+        return False
+
+    replaced = sum(
+        1 for ln, rec in parsed if ln > end_line and rec.get("event") == event
+    )
+    return replaced < voided
+
+
 def cmd_append(args) -> int:
     taxonomy = load_taxonomy()
     # スキーマ上 str 固定のフィールドは生文字列のまま受け取る(HC-005)
@@ -423,11 +473,14 @@ def cmd_append(args) -> int:
             )
             return 1
     elif any(r.get("event") == "loop_end" for _, r in effective):
-        print(
-            f"記録拒否 — {args.loop} は loop_end 記録済みです(LL-09)。"
-            "誤記の回復は correction イベント(supersedes=対象行番号)で無効化してから追記し直してください"
-        )
-        return 1
+        # correction が無効化したレコードの差し替えだけは通す(LL-09 修復スロット / HC-017)
+        if not repair_slot_open(existing, args.event):
+            print(
+                f"記録拒否 — {args.loop} は loop_end 記録済みです(LL-09)。"
+                f"誤記の回復は correction(supersedes=対象行番号)で {args.event} を無効化してから、"
+                f"同じ {args.event} を 1 件だけ追記し直してください"
+            )
+            return 1
 
     # ツーストライク規則(LL-10)の警告: 同一コードの既存件数を数える
     if args.event == "failure":
