@@ -1,5 +1,5 @@
 {
-  "scaffold_version": "1.8.0",
+  "scaffold_version": "1.12.0",
   "registry_hint": "c:/_ClaudeCode/harness-kit/scaffold-kit/registry",
   "components": [
     {
@@ -7,8 +7,8 @@
       "id": "agents_core",
       "target": "AGENTS.md",
       "source": "blocks/agents_core.md",
-      "installed_version": "1.8.0",
-      "installed_sha256": "aa18e95da6324039b4729d76f561bee35e4f0e6d32eadfba6a7a431297320700"
+      "installed_version": "1.11.0",
+      "installed_sha256": "50cc0109bd17e26f4264a9d8164974cba2471d808068c81daacd5a68549ddc96"
     },
     {
       "type": "file",
@@ -23,8 +23,8 @@
       "id": "looplog",
       "target": "harness/looplog.py",
       "source": "files/harness/looplog.py",
-      "installed_version": "1.8.0",
-      "installed_sha256": "e0f4dbe2085eaf7916c182e5313fd67383ad856d48b80ca58fede8d9c5eab6ff"
+      "installed_version": "1.12.0",
+      "installed_sha256": "34ebddc244944a481aeca31bcd9b4fdf7adb4a937b4a43b6ac41aeae21ddea7e"
     },
     {
       "type": "file",
@@ -39,8 +39,8 @@
       "id": "taxonomy",
       "target": "schema/taxonomy.json",
       "source": "files/schema/taxonomy.json",
-      "installed_version": "1.8.0",
-      "installed_sha256": "c0adccea48171f37bad672ef6bdbec929de58bb12cfdb0f984826baf67e9fd66"
+      "installed_version": "1.10.0",
+      "installed_sha256": "0573ffd31768fb4cb814a80f1e731647fada8956431e38689aaa3e5085924b3d"
     },
     {
       "type": "file",
